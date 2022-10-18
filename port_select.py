@@ -2,6 +2,7 @@
 
 
 import serial.tools.list_ports
+import os
 
 
 
@@ -41,10 +42,14 @@ def print_ports(p_list):
 
 def select_port(p_list):
     
+    # Clear screen
+    os.system('clear')
     
-    port_list = get_ports()
+    
     print_ports(p_list)
     port_sel = int(input("\nSelect a port using its listed index [999 to EXIT]: "))
+    
+    os.system('clear')
     
     if not (port_sel > len(p_list) or port_sel < 0):
         return p_list[port_sel][::]
@@ -65,16 +70,19 @@ if __name__ == '__main__':
     while run:
         port_list = get_ports()
         
-        try:
-            selection = int(input("Selection:\n[1]: SELECT an active port.\n[2]: EXIT program.\n"))
+        #try:
+            #selection = int(input("Selection:\n[1]: " + \ 
+            #"SELECT an active port.\n[2]: EXIT program.\n"))
         
         # Attempt to get input from user
-        except ValueError:
-            print("!ERROR! Invalid Input -- Only integers allowed")
+        #except ValueError:
+            #print("!ERROR! Invalid Input -- Only integers allowed")
         
         # Failsafe to -1 numeric error code
-        finally:
-            selection = -1
+        #finally:
+            #selection = -1
+        selection = int(input("Selection: \n\n[1] " + \
+         "SELECT an active port.\n[2]: EXIT program.\n"))
         
         if selection == 1:
             my_port, index = select_port(port_list)
