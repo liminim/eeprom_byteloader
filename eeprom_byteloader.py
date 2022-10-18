@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
 
-
-import serial
-from time import sleep
-
 import main_menu
 
 
@@ -15,7 +11,7 @@ page_buffer = []
         
 
 def serial_xfer_begin():
-    """ !!DISABLED FOR TESTING!!
+    
     ser = serial.Serial('/dev/ttyACM0', 19200, timeout=0.5)
     ser.reset_input_buffer()
     
@@ -24,20 +20,16 @@ def serial_xfer_begin():
         line = ser.readline().decode('utf-8').rstrip()
         print(line)
         time.sleep(0.5)
-    """
 
 
-run = True
+
+
 
 if __name__ == '__main__':
     
+    run = True
     while run:
         
-        menu_result = main_menu.menu()
-        
-        if menu_result == -1:
+        if main_menu.menu() == -1:
             run = False
             continue
-        
-        elif menu_result == 2:
-            serial_xfer_begin()

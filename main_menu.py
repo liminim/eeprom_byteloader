@@ -4,7 +4,6 @@
 
 
 import shelve
-
 import os
 
 import port_select as p_sel
@@ -18,22 +17,30 @@ TARGET_FILE_ATTR = 'target'
 
 
 
-def save_COM(t_file="None", port="None", desc="None", hwid="None"):
+def save_COM(port, desc, hwid):
     
     com_save = shelve.open(DATA_FILE)
     
     com_save[COM_PORT_ATTR] = port
     com_save[COM_DESC_ATTR] = desc
     com_save[COM_HWID_ATTR] = hwid
-    com_save[TARGET_FILE_ATTR] = t_file
     
-    print("COM Data saved...\n")
+    print("COM Data saved...")
     
+    com_save.close()
+    
+
+def save_file(file_path):
+    
+    com_save = shelve.open(DATA_FILE)
+    com_save[TARGET_FILE_ATTR] = file_path
+    
+    print("File path saved...")
     
     com_save.close()
 
 
-def read_COM():
+def read_data():
     com_save = shelve.open(DATA_FILE)
     
     data = (com_save.get(COM_PORT_ATTR), \
@@ -52,72 +59,86 @@ def sel_file():
     os.system('clear')
     
     if os.path.exists(b_file):
-        
         return b_file
     
     else:
         print("!ERROR! - File not found or does not exist!")
-        return "None"
+
+    return -1
 
 
 def menu():
     
     # Gather serial COM port info using port_select.py
     port_info = p_sel.get_ports()
-    com_data = read_COM()
-    com_temp = []
-    for i in com_data: com_temp.append(i)
+    
+    data = read_data()
+    data_temp = []
+    for i in data: data_temp.append(i)
     
     # Print main menu
-    print(("\n\n\n    ######--EEPROM BYTELOADER--######\n\n" + \
-          "With an active port selected, choose a binary file\n" + \
-          "to upload to Arduino, which will write to EEPROM.\n\n" + \
-          "           ---COM---\nPORT: [{}]; DESC: [{}];\n" + \
-          "HWID: [{}]\n\nTarget File: [{}]").format(*com_temp))
+    print("""    
+                    ######--EEPROM BYTELOADER--######
     
-    print("Detected COM ports -- {}\n".format(len(port_info)))
+            With an active port selected, choose a binary file
+            to upload to Arduino, which will write to EEPROM.
+          
+    ---COM---
+    PORT: {}
+    DESC: {}
+    HWID: [{}]
     
-     
+    ---FILE---
+    Target File: {}\n""".format(*data_temp))
     
-    print("[1] - Configure COM Port\n[2] - Select Target File\n" + \
-              "[3] - Begin Data Transfer\n[4] - Quit Program\n\n")
+    print("""
+    Detected COM ports -- {}""".format(len(port_info)))
     
-    # Attempt to gather input from user
-    #try:
-        #selection = int(input("Make a selection:  "))
     
-    #except ValueError:
-        #print("!ERROR! Invalid Input -- Only integers allowed")
-    # Fail-safe to -1 in case of Value Error
-    #finally:
-        #selection = -1
+    print("""
+[1] - Configure COM Port
+[2] - Select Target File
+[3] - Begin Data Transfer
+[4] - Quit Program\n""")
     
     selection = int(input("Make a selection:   "))
+    
     # Clear the screen
     os.system("clear")
     
-    my_port = []
+    # Select port
     if selection == 1:
         my_port = p_sel.select_port(port_info)
+        
+        if my_port != -1:
+            save_COM(*my_port)
     
+    # Select file
     elif selection == 2:
         target_file = sel_file()
+        if target_file != -1:
+            save_file(target_file)
     
+    # Begin data transfer
     elif selection == 3:
-        my_port = (3, 3)
+        print("Selected 3")
     
+    # Exit menu
     elif selection == 4:
-		# BAD - Change Eventually
-        print("Quitting program - Goodbye!\n\n\n")
-        exit()
+        print("Exiting...")
+        return -1
     
     else:
         print("!ERROR! - INVALID INPUT")
-        my_port = (0, 0)
-    
-    save_COM(target_file, *my_port)
-    return my_port
+        
+
 
 
 if __name__ == '__main__':
-    menu()
+    
+    run = True
+    while run:
+        
+        if menu() == -1:
+            run = False
+

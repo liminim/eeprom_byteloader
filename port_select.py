@@ -33,11 +33,16 @@ def num_ports(p_list):
 
 def print_ports(p_list):
     
+    os.system('clear')
+    
     for port, desc, hwid in p_list:
         this_port_index = p_list.index([port, desc, hwid])
         this_port_info = (this_port_index, port, desc, hwid)
-        print("\n{}: PORT: {}; DESCRIPTION: {};\nHWID: [{}]\n".format(\
-        *this_port_info))
+        print("""
+{}: 
+    PORT: {}
+    DESCRIPTION: {}
+    HWID: [{}]\n""".format(*this_port_info))
 
 
 def select_port(p_list):
@@ -47,59 +52,58 @@ def select_port(p_list):
     
     
     print_ports(p_list)
-    port_sel = int(input("\nSelect a port using its listed index [999 to EXIT]: "))
+    port_sel = int(input("""
+Select a port using its listed index [0 to EXIT]: """))
     
     os.system('clear')
     
     if not (port_sel > len(p_list) or port_sel < 0):
-        return p_list[port_sel][::]
+        return p_list[port_sel]
         
-    elif port_sel == 999:
+    elif port_sel == 0:
         print("NOTICE: Exiting without selection")
     
     else:
         print("!ERROR! - Invalid Input")
     
-    return (-1, -1)
+    return -1
+    
+
+def test():
+    port_list = get_ports()
+        
+    selection = int(input("""\n
+port_select.py test:
 
 
-run = True
+[1] -- SELECT an active port.
+[2] -- EXIT program.\n"""))
+    
+    os.system('clear')
+
+    if selection == 1:
+        my_port = select_port(port_list)
+        
+        print(""""\n
+##--Selected Port--##
+
+Port: {}
+Desc: {}
+HWID: [{}]""".format(*my_port))
+    
+    elif selection == 2:
+        return -1
+        
+    else:
+        print("!ERROR! - Invalid selection.")
 
 if __name__ == '__main__':
     
+    run = True
+    
     while run:
-        port_list = get_ports()
         
-        #try:
-            #selection = int(input("Selection:\n[1]: " + \ 
-            #"SELECT an active port.\n[2]: EXIT program.\n"))
-        
-        # Attempt to get input from user
-        #except ValueError:
-            #print("!ERROR! Invalid Input -- Only integers allowed")
-        
-        # Failsafe to -1 numeric error code
-        #finally:
-            #selection = -1
-        selection = int(input("Selection: \n\n[1] " + \
-         "SELECT an active port.\n[2]: EXIT program.\n"))
-        
-        if selection == 1:
-            my_port, index = select_port(port_list)
-            if index >= 0:
-                
-                print(my_port)
-                print(index)
-                
-                print("-- Selected Port --\nIndex: [" + str(index) + "]: " + \
-                      "Port: {}\nDesc: {}; HWID: [{}]".format(*my_port))
-            
-        elif selection == 2:
+        if test() == -1:
             run = False
-            continue
-            
-        else:
-            print("!ERROR! - Invalid selection.")
-            
-    print("Program is exiting... Goodbye!")
-    exit()
+    os.system('clear')
+    print("\n\nProgram is exiting... Goodbye!\n")
