@@ -6,9 +6,6 @@ import os
 
 
 
-port_list = []
-
-
 def get_ports():
     
     ports = serial.tools.list_ports.comports()
@@ -21,8 +18,8 @@ def get_ports():
         return p_list
     
     else:
-        print("!ERROR! - Port list empty. Zero (0) ports found!")
-        p_list = [["EMPTY", "EMPTY", "EMPTY"]]
+        print('!ERROR! - Port list empty. Zero (0) ports found!')
+        p_list = [['EMPTY', 'EMPTY', 'EMPTY']]
         return p_list
     
     
@@ -38,11 +35,11 @@ def print_ports(p_list):
     for port, desc, hwid in p_list:
         this_port_index = p_list.index([port, desc, hwid])
         this_port_info = (this_port_index, port, desc, hwid)
-        print("""
-{}: 
+        print('''
+ {}: 
     PORT: {}
     DESCRIPTION: {}
-    HWID: [{}]\n""".format(*this_port_info))
+    HWID: [{}]\n'''.format(*this_port_info))
 
 
 def select_port(p_list):
@@ -52,8 +49,8 @@ def select_port(p_list):
     
     
     print_ports(p_list)
-    port_sel = int(input("""
-Select a port using its listed index [0 to EXIT]: """))
+    port_sel = int(input('''
+Select a port using its listed index [0 to EXIT]: '''))
     
     os.system('clear')
     
@@ -61,10 +58,10 @@ Select a port using its listed index [0 to EXIT]: """))
         return p_list[port_sel]
         
     elif port_sel == 0:
-        print("NOTICE: Exiting without selection")
+        print('NOTICE: Exiting without selection')
     
     else:
-        print("!ERROR! - Invalid Input")
+        print('!ERROR! - Invalid Input')
     
     return -1
     
@@ -72,30 +69,30 @@ Select a port using its listed index [0 to EXIT]: """))
 def test():
     port_list = get_ports()
         
-    selection = int(input("""\n
+    selection = int(input('''\n
 port_select.py test:
 
 
 [1] -- SELECT an active port.
-[2] -- EXIT program.\n"""))
+[2] -- EXIT program.\n'''))
     
     os.system('clear')
 
     if selection == 1:
         my_port = select_port(port_list)
         
-        print(""""\n
+        print(''''\n
 ##--Selected Port--##
 
 Port: {}
 Desc: {}
-HWID: [{}]""".format(*my_port))
+HWID: [{}]'''.format(*my_port))
     
     elif selection == 2:
         return -1
         
     else:
-        print("!ERROR! - Invalid selection.")
+        print('!ERROR! - Invalid selection.')
 
 if __name__ == '__main__':
     
@@ -106,4 +103,4 @@ if __name__ == '__main__':
         if test() == -1:
             run = False
     os.system('clear')
-    print("\n\nProgram is exiting... Goodbye!\n")
+    print('\n\nProgram is exiting... Goodbye!\n')

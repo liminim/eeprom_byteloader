@@ -7,7 +7,7 @@ MAX_BYTES = 64000
 
 def buf_limit_check(buffer):
     if buffer > MAX_BYTES:
-        print("!ERROR - CAN'T WRITE TO BUFFER - MAX BYTES REACHED!")
+        print('!ERROR - CAN'T WRITE TO BUFFER - MAX BYTES REACHED!')
         return True
     
     else:
@@ -71,4 +71,4 @@ if (__name__) == '__main__':
         fdump.write(to_bytes)
     
     buffer_length = len(byte_buffer)
-    print("Write Complete!\nWrote " + str(buffer_length) + " bytes!")
+    print('Write Complete!\nWrote ' + str(buffer_length) + ' bytes!')

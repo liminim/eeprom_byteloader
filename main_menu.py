@@ -1,6 +1,6 @@
 #!/usr/bin/env/python3
-"""main_menu.py - Handles top level menu of eeprom_byteloader.py 
-    program. Also handles storing values between sessions."""
+'''main_menu.py - Handles top level menu of eeprom_byteloader.py 
+    program. Also handles storing values between sessions.'''
 
 
 import shelve
@@ -25,7 +25,7 @@ def save_COM(port, desc, hwid):
     com_save[COM_DESC_ATTR] = desc
     com_save[COM_HWID_ATTR] = hwid
     
-    print("COM Data saved...")
+    print('COM Data saved...')
     
     com_save.close()
     
@@ -35,7 +35,7 @@ def save_file(file_path):
     com_save = shelve.open(DATA_FILE)
     com_save[TARGET_FILE_ATTR] = file_path
     
-    print("File path saved...")
+    print('File path saved...')
     
     com_save.close()
 
@@ -54,7 +54,7 @@ def read_data():
     
 def sel_file():
     
-    b_file = input ("Enter binary file for transfer: \n\n::> ")
+    b_file = input ('Enter binary file for transfer: \n\n::> ')
     
     os.system('clear')
     
@@ -62,7 +62,7 @@ def sel_file():
         return b_file
     
     else:
-        print("!ERROR! - File not found or does not exist!")
+        print('!ERROR! - File not found or does not exist!')
 
     return -1
 
@@ -77,35 +77,38 @@ def menu():
     for i in data: data_temp.append(i)
     
     # Print main menu
-    print("""    
+    print('''    
                     ######--EEPROM BYTELOADER--######
     
             With an active port selected, choose a binary file
             to upload to Arduino, which will write to EEPROM.
-          
     ---COM---
     PORT: {}
     DESC: {}
     HWID: [{}]
     
     ---FILE---
-    Target File: {}\n""".format(*data_temp))
+    Target File: {}\n'''.format(*data_temp))
     
-    print("""
-    Detected COM ports -- {}""".format(len(port_info)))
+    print('''
+    Detected COM ports -- {}'''.format(len(port_info)))
     
     
-    print("""
+    print('''
 [1] - Configure COM Port
 [2] - Select Target File
 [3] - Begin Data Transfer
-[4] - Quit Program\n""")
+[4] - Quit Program\n''')
     
-    selection = int(input("Make a selection:   "))
+    try:
+        selection = int(input('Make a selection:  '))
     
-    # Clear the screen
-    os.system("clear")
+    except ValueError:
+        os.system('clear')
+        print('!!ERROR!! - input must be a number!\n')
+        return -2
     
+    os.system('clear')
     # Select port
     if selection == 1:
         my_port = p_sel.select_port(port_info)
@@ -121,15 +124,15 @@ def menu():
     
     # Begin data transfer
     elif selection == 3:
-        print("Selected 3")
+        print('Selected 3')
     
     # Exit menu
     elif selection == 4:
-        print("Exiting...")
+        print('Exiting...')
         return -1
     
     else:
-        print("!ERROR! - INVALID INPUT")
+        print('!ERROR! - INVALID INPUT')
         
 
 
