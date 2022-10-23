@@ -1,29 +1,32 @@
-#!/usr/bin/env/python3
+ b#!/usr/bin/env/python3
 '''main_menu.py - Handles top level menu of eeprom_byteloader.py 
     program. Also handles storing values between sessions.'''
 
 
-import shelve
-import os
+import shelve, os, struct
 
+import serial_com
 import port_select as p_sel
+
 
 
 DATA_FILE = 'COM_SAVE'
 COM_PORT_ATTR = 'port'
 COM_DESC_ATTR = 'desc'
 COM_HWID_ATTR = 'hwid'
+COM_BAUD_ATTR = 'baud'
 TARGET_FILE_ATTR = 'target'
 
 
 
-def save_COM(port, desc, hwid):
+def save_COM(port, desc, hwid, baud=9200):
     
     com_save = shelve.open(DATA_FILE)
     
     com_save[COM_PORT_ATTR] = port
     com_save[COM_DESC_ATTR] = desc
     com_save[COM_HWID_ATTR] = hwid
+    com_save[COM_BAUD_ATTR] = baud
     
     print('COM Data saved...')
     
@@ -52,6 +55,7 @@ def read_data():
     
     return data
     
+    
 def sel_file():
     
     b_file = input ('Enter binary file for transfer: \n\n::> ')
@@ -66,6 +70,24 @@ def sel_file():
 
     return -1
 
+
+def begin_serial():
+    
+    data = read_data()
+    ser = serial_com.SerialCOM(data[0])
+    
+    if not ser.setup_serial():
+        print('!ERROR! - Couldn\'t set up serial connection')
+        return False
+    
+    with open(data[-1], 'rb') as bfile:
+        bdata = bytearray(bfile.read())
+        ser.load_buffer(bdata)
+    
+    print(ser.ser)
+    
+    
+    
 
 def menu():
     
@@ -112,7 +134,6 @@ def menu():
     # Select port
     if selection == 1:
         my_port = p_sel.select_port(port_info)
-        
         if my_port != -1:
             save_COM(*my_port)
     
@@ -124,7 +145,7 @@ def menu():
     
     # Begin data transfer
     elif selection == 3:
-        print('Selected 3')
+        begin_serial()
     
     # Exit menu
     elif selection == 4:
@@ -136,7 +157,6 @@ def menu():
         
 
 
-
 if __name__ == '__main__':
     
     run = True
@@ -145,3 +165,4 @@ if __name__ == '__main__':
         if menu() == -1:
             run = False
 
+print('\n\nExiting program... Goodbye!\n\n')

@@ -7,18 +7,27 @@ import os, serial
 class SerialCOM:
 	
 	def __init__(self, port='undefined', speed=9600, \
-		packet_size=16, max_memory=32000):
+		 packet_size=16, max_memory=32000, timeout=0.1):
 			
 			self.port = port
 			self.speed = speed
 			self.packet_size = packet_size
 			self.max_memory = max_memory
+			self.timeout = timeout
 			
+			self.ser = None
 			self.buffer = []
-	
+			self.abort = False
+			
 	
 	def __int__(self):
-		return len(self.buffer) * self.packet_size
+		buffer_len = len(self.buffer)
+		if buffer_len > 0:
+			buff_byte_size = (buffer_len - 1) * self.packet_size
+			adj_size = buff_byte_size + len(self.buffer[-1])
+		else:
+			adj_size = 0
+		return adj_size
 			
 			
 	def __str__(self):
@@ -31,24 +40,8 @@ BAUD RATE: {self.speed}bps
 PACKET SIZE: {self.packet_size}B
 MAX MEMORY: {self.max_memory}B
 BYTES IN BUFFER: {int(self)}B\n'''
-	
-	
-	def load_buffer(self, data):
-		
-		packet = []
-		
-		for b in data:
-			if mem_limit():
-				print('!!ERROR!! - Buffer at memory limit!')
-				break
-				
-			elif len(packet) == self.packet_size:
-				self.buffer.append(packet)
-				packet = []
-			
-			packet.append(b)
-	
-	
+
+
 	def mem_limit(self):
 		
 		if int(self) >= self.max_memory:
@@ -56,8 +49,87 @@ BYTES IN BUFFER: {int(self)}B\n'''
 		
 		else:
 			return False
-
 	
+	
+	def mem_limit_warn(self):
+		
+		print('WARNING - Memory limit exceeded. Abort write?')
+		
+		try:
+			sel = int(input('1 - Abort; 2 - Continue: '))
+		
+		except ValueError:
+			print('ERROR - input must be a number')
+		
+		except:
+			print('ERROR - invalid input')
+		
+		if sel == 1:
+			self.abort = True
+		
+		elif sel == 2:
+			self.abort = False
+		
+	
+	def load_buffer(self, data):
+		
+		self.buffer = []
+		packet = []
+		
+		for b in data:
+			if self.mem_limit():
+				self.mem_limit_warn()
+				break
+				
+			elif len(packet) == self.packet_size:
+				self.buffer.append(packet)
+				packet = []
+			
+			packet.append(b)
+			
+		self.buffer.append(packet)
+	
+	
+	def send_serial(self, ser):
+		
+		os.system('clear')
+		
+		if len(self.buffer) == 0:
+			print('ERROR - No data in buffer to write')
+			return False
+		
+		if serial == None:
+			print('ERROR - Serial object undefined')
+			return False
+		
+		if self.abort:
+			print('WARNING - Aborting write...')
+			return False
+		
+		for packet in self.buffer:
+			
+	
+
+
+	def setup_serial(self):
+		
+		os.system('clear')
+		try:
+			baud = int(input('\nBaud rate: '))
+			buf_size = int(input('\nEEPROM Buffer Size: '))
+			mem_size = int(input('\nEEPROM Memory Size: '))
+			
+		
+		except ValueError:
+			print('ERROR - Input must be a number')
+			return False
+		
+		
+		self.ser = SerialCOM(self.port, baud, buf_size, mem_size)
+		
+		return True
+	
+
 
 def test():
 	

@@ -7,7 +7,7 @@ MAX_BYTES = 64000
 
 def buf_limit_check(buffer):
     if buffer > MAX_BYTES:
-        print('!ERROR - CAN'T WRITE TO BUFFER - MAX BYTES REACHED!')
+        print('!ERROR - CAN\'T WRITE TO BUFFER - MAX BYTES REACHED!')
         return True
     
     else:
@@ -23,7 +23,7 @@ def buf_write_filter(addr):
 if (__name__) == '__main__':
     
     curr_addr = 0
-    byte_buffer = []
+    byte_buffer = bytearray()
     
     # Shift byte to left for 8 bytes
     curr_byte = 1
@@ -66,7 +66,7 @@ if (__name__) == '__main__':
         hex_array.append(hex(byte))
     print(hex_array)
     
-    with open('byteload_test.ackprom', 'ab') as fdump:
+    with open('byteload_test.ackprom', 'wb') as fdump:
         to_bytes = bytes(byte_buffer)
         fdump.write(to_bytes)
     
