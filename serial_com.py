@@ -1,6 +1,6 @@
 #!/usr/bin/env/python3
 
-import os, serial
+import os, serial, time
 
 
 
@@ -90,7 +90,7 @@ BYTES IN BUFFER: {int(self)}B\n'''
 		self.buffer.append(packet)
 	
 	
-	def send_serial(self, ser):
+	def send_serial(self, byte_size=8, parity='N', stop_bits=1):
 		
 		os.system('clear')
 		
@@ -106,8 +106,19 @@ BYTES IN BUFFER: {int(self)}B\n'''
 			print('WARNING - Aborting write...')
 			return False
 		
+		#temp_serial = serial.Serial(self.port, self.speed, byte_size, \
+			#parity, stop_bits)
+		#temp_serial.open()
+		time.sleep(3)
+		
+		x = 0
 		for packet in self.buffer:
-			
+			y = 0
+			print('Packet: {}\n'.format(x))
+			for byte in packet:
+				y += 1
+			print('Num Bytes: {}\n{}\n'.format(y, packet))
+			x += 1
 	
 
 
@@ -115,9 +126,9 @@ BYTES IN BUFFER: {int(self)}B\n'''
 		
 		os.system('clear')
 		try:
-			baud = int(input('\nBaud rate: '))
-			buf_size = int(input('\nEEPROM Buffer Size: '))
-			mem_size = int(input('\nEEPROM Memory Size: '))
+			self.speed = int(input('\nBaud rate: '))
+			self.packet_size = int(input('\nEEPROM Buffer Size: '))
+			self.max_memory = int(input('\nEEPROM Memory Size: '))
 			
 		
 		except ValueError:
@@ -125,10 +136,7 @@ BYTES IN BUFFER: {int(self)}B\n'''
 			return False
 		
 		
-		self.ser = SerialCOM(self.port, baud, buf_size, mem_size)
-		
 		return True
-	
 
 
 def test():

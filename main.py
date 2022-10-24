@@ -1,4 +1,4 @@
- b#!/usr/bin/env/python3
+#!/usr/bin/env/python3
 '''main_menu.py - Handles top level menu of eeprom_byteloader.py 
     program. Also handles storing values between sessions.'''
 
@@ -84,7 +84,7 @@ def begin_serial():
         bdata = bytearray(bfile.read())
         ser.load_buffer(bdata)
     
-    print(ser.ser)
+    ser.send_serial()
     
     
     
@@ -156,7 +156,7 @@ def menu():
         print('!ERROR! - INVALID INPUT')
         
 
-git s
+
 if __name__ == '__main__':
     
     run = True
