@@ -37,7 +37,6 @@ def save_file(file_path):
     
     com_save = shelve.open(DATA_FILE)
     com_save[TARGET_FILE_ATTR] = file_path
-    
     print('File path saved...')
     
     com_save.close()

@@ -50,14 +50,14 @@ def select_port(p_list):
     
     print_ports(p_list)
     port_sel = int(input('''
-Select a port using its listed index [0 to EXIT]: '''))
+Select a port using its listed index [999 to EXIT]: '''))
     
     os.system('clear')
     
     if not (port_sel > len(p_list) or port_sel < 0):
         return p_list[port_sel]
         
-    elif port_sel == 0:
+    elif port_sel == 999:
         print('NOTICE: Exiting without selection')
     
     else:

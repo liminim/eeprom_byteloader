@@ -7,7 +7,7 @@ import os, serial, time
 class SerialCOM:
 	
 	def __init__(self, port='undefined', speed=9600, \
-		 packet_size=16, max_memory=32000, timeout=0.1):
+		 packet_size=16, max_memory=32000, timeout=1):
 			
 			self.port = port
 			self.speed = speed
@@ -16,20 +16,16 @@ class SerialCOM:
 			self.timeout = timeout
 			
 			self.ser = None
-			self.buffer = []
+			self.buffer = bytearray()
 			self.abort = False
 			
 	
 	def __int__(self):
 		buffer_len = len(self.buffer)
-		if buffer_len > 0:
-			buff_byte_size = (buffer_len - 1) * self.packet_size
-			adj_size = buff_byte_size + len(self.buffer[-1])
-		else:
-			adj_size = 0
-		return adj_size
+		return buffer_len
+		
 			
-			
+		
 	def __str__(self):
 		return f'''
 
@@ -74,20 +70,14 @@ BYTES IN BUFFER: {int(self)}B\n'''
 	def load_buffer(self, data):
 		
 		self.buffer = []
-		packet = []
 		
 		for b in data:
+				
 			if self.mem_limit():
 				self.mem_limit_warn()
 				break
-				
-			elif len(packet) == self.packet_size:
-				self.buffer.append(packet)
-				packet = []
 			
-			packet.append(b)
-			
-		self.buffer.append(packet)
+			self.buffer.append(b)
 	
 	
 	def send_serial(self, byte_size=8, parity='N', stop_bits=1):
@@ -106,21 +96,16 @@ BYTES IN BUFFER: {int(self)}B\n'''
 			print('WARNING - Aborting write...')
 			return False
 		
-		#temp_serial = serial.Serial(self.port, self.speed, byte_size, \
-			#parity, stop_bits)
-		#temp_serial.open()
+		temp_serial = serial.Serial(self.port, self.speed, byte_size, \
+			parity, stop_bits)
 		time.sleep(3)
-		
-		x = 0
-		for packet in self.buffer:
-			y = 0
-			print('Packet: {}\n'.format(x))
-			for byte in packet:
-				y += 1
-			print('Num Bytes: {}\n{}\n'.format(y, packet))
-			x += 1
-	
 
+		temp_serial.write(self.buffer)
+		
+		print(self.buffer)
+		print(self);
+			
+	
 
 	def setup_serial(self):
 		
